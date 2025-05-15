@@ -9,7 +9,7 @@ import Testimonials from '@/components/testimonials';
 import { ContactSection } from '@/components/contact-form';
 import CtaSection from '@/components/cta-section';
 import Footer from '@/components/footer';
-// Removed ParticlesBackground as per user request
+import { FloatingBackground } from '@/components/FloatingElements';
 import BackgroundGradientAnimation from '@/components/BackgroundGradientAnimation';
 
 export default function Home() {
@@ -80,7 +80,15 @@ export default function Home() {
         ) : null}
       </AnimatePresence>
 
-      {/* Particles background removed as per user request */}
+      {/* Enhanced background with gradients instead of particles */}
+      <div className="fixed inset-0 bg-gradient-to-br from-background via-background to-background -z-10 overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.03] dark:opacity-[0.05]" />
+        
+        {/* Animated gradient blobs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-primary/10 dark:bg-primary/5 filter blur-[100px] animate-float opacity-50 dark:opacity-30"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-secondary/10 dark:bg-secondary/5 filter blur-[100px] animate-float-delay opacity-50 dark:opacity-30"></div>
+        <div className="absolute top-3/4 right-1/3 w-64 h-64 rounded-full bg-accent/10 dark:bg-accent/5 filter blur-[80px] animate-float-slow opacity-40 dark:opacity-20"></div>
+      </div>
       
       <motion.div 
         variants={pageVariants}
@@ -89,6 +97,7 @@ export default function Home() {
         exit="exit"
         className="relative overflow-hidden"
       >
+        
         <Header />
         <main>
           <HeroSection />
