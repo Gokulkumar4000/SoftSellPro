@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import AnimatedText, { AnimatedGradientText } from '@/components/AnimatedText';
 import { heroHeading, heroContent, heroImage } from '@/lib/animations';
 import { useRef, useEffect, useState } from 'react';
+import { CtaButton } from '@/components/AnimatedButton';
 
 export default function HeroSection() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -151,33 +152,48 @@ export default function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8, duration: 0.5 }}
             >
+              <CtaButton href="#contact">
+                Sell My Licenses
+              </CtaButton>
+              
               <motion.div
                 whileHover={{ 
                   scale: 1.05,
-                  boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+                  y: -5,
+                  boxShadow: "0 15px 30px -10px rgba(0, 0, 0, 0.1)"
                 }}
                 whileTap={{ scale: 0.98 }}
-                className="hover-lift"
-              >
-                <Button 
-                  asChild 
-                  className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white px-8 py-6 h-auto shadow-lg"
-                >
-                  <a href="#contact">Sell My Licenses</a>
-                </Button>
-              </motion.div>
-              
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                className="hover-lift"
               >
                 <Button 
                   asChild 
                   variant="outline" 
-                  className="px-8 py-6 h-auto shadow-md"
+                  className="relative overflow-hidden px-8 py-6 h-auto shadow-md group"
                 >
-                  <a href="#how-it-works">How It Works</a>
+                  <a href="#how-it-works" className="flex items-center">
+                    How It Works
+                    <motion.span 
+                      className="ml-2 opacity-70 group-hover:opacity-100"
+                      animate={{ x: [0, 5, 0] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      →
+                    </motion.span>
+                    
+                    {/* Shimmer effect on hover */}
+                    <motion.span 
+                      className="absolute inset-0 w-full h-full"
+                      initial={false}
+                      whileHover={{
+                        background: [
+                          "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 100%)",
+                          "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%)",
+                          "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 100%)"
+                        ],
+                        x: ["-100%", "100%", "100%"]
+                      }}
+                      transition={{ duration: 1, ease: "easeInOut" }}
+                    />
+                  </a>
                 </Button>
               </motion.div>
             </motion.div>
