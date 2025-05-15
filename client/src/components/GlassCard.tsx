@@ -85,6 +85,7 @@ const GlassCard: React.FC<GlassCardProps> = ({
   className,
   interactive = true,
   animate = false,
+  style,
   ...props
 }) => {
   const blurMap = {
@@ -111,13 +112,11 @@ const GlassCard: React.FC<GlassCardProps> = ({
     dark: 'bg-gray-900/80 border-gray-800',
   };
 
-  const hoverEffectMap: Record<string, any> = {
-    none: {},
-    lift: { y: -8, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" },
-    glow: { boxShadow: "0 0 15px 5px rgba(99, 102, 241, 0.3)" },
-    scale: { scale: 1.05 },
-    tilt: { rotateX: 5, rotateY: 5 },
-    border: { borderColor: "hsl(var(--primary))" },
+  // Determine which animation to use based on the animate prop
+  const getAnimationVariant = () => {
+    if (!animate) return "visible";
+    if (typeof animate === 'string') return animate;
+    return "visible";
   };
 
   return (
@@ -132,10 +131,22 @@ const GlassCard: React.FC<GlassCardProps> = ({
       )}
       initial="hidden"
       whileInView="visible"
-      whileHover={interactive ? "hover" : undefined}
-      animate={animate ? (typeof animate === 'string' ? animate : "visible") : "visible"}
+      whileHover={interactive ? ({
+        scale: hoverEffect === 'scale' ? 1.05 : 1.02,
+        y: hoverEffect === 'lift' ? -8 : 0,
+        boxShadow: hoverEffect === 'glow' 
+          ? "0 0 15px 5px rgba(99, 102, 241, 0.3)" 
+          : hoverEffect === 'lift'
+            ? "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+            : undefined,
+        borderColor: hoverEffect === 'border' ? "hsl(var(--primary))" : undefined,
+        rotateX: hoverEffect === 'tilt' ? 5 : 0,
+        rotateY: hoverEffect === 'tilt' ? 5 : 0,
+      }) : undefined}
+      animate={getAnimationVariant()}
       variants={cardVariants}
       viewport={{ once: true, amount: 0.2 }}
+      style={style}
       {...props}
     >
       {children}

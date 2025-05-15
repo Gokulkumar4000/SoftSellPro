@@ -27,32 +27,65 @@ export function ThemeProvider({
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
+    () => {
+      // Use try-catch to handle any localStorage errors
+      try {
+        const storedTheme = localStorage.getItem(storageKey) as Theme;
+        if (storedTheme === 'light' || storedTheme === 'dark' || storedTheme === 'system') {
+          return storedTheme;
+        }
+      } catch (e) {
+        console.error("LocalStorage access error:", e);
+      }
+      return defaultTheme;
+    }
   )
 
+  // Apply theme class on mount and when theme changes
   useEffect(() => {
     const root = window.document.documentElement
 
+    // First remove all theme classes
     root.classList.remove("light", "dark")
 
+    // Determine the effective theme (resolving system preference if needed)
+    let effectiveTheme = theme;
     if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
+      effectiveTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
         : "light"
-
-      root.classList.add(systemTheme)
-      return
     }
 
-    root.classList.add(theme)
+    // Apply the theme class
+    root.classList.add(effectiveTheme)
+    
+    // For debugging
+    console.log("Theme applied:", effectiveTheme);
+    
+    // Set up a media query listener to detect system theme changes
+    if (theme === "system") {
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      const handleChange = () => {
+        const newTheme = mediaQuery.matches ? "dark" : "light";
+        root.classList.remove("light", "dark");
+        root.classList.add(newTheme);
+      };
+      
+      mediaQuery.addEventListener("change", handleChange);
+      return () => mediaQuery.removeEventListener("change", handleChange);
+    }
   }, [theme])
 
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme)
-      setTheme(theme)
+    setTheme: (newTheme: Theme) => {
+      try {
+        console.log("Changing theme to:", newTheme);
+        localStorage.setItem(storageKey, newTheme);
+        setTheme(newTheme);
+      } catch (e) {
+        console.error("Failed to set theme:", e);
+      }
     },
   }
 
