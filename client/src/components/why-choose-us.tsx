@@ -1,28 +1,47 @@
 import { motion } from 'framer-motion';
 import { DollarSign, ShieldCheck, Timer, HeadphonesIcon, Check } from 'lucide-react';
+import { AnimatedMoney, AnimatedShield, AnimatedClock, AnimatedIconContainer } from './AnimatedIcons';
 
 export default function WhyChooseUs() {
   const features = [
     {
-      icon: <DollarSign className="h-6 w-6 text-primary" />,
+      icon: <AnimatedMoney size="md" variant="primary" />,
       title: 'Best Market Rates',
       description: 'We leverage our extensive network of buyers to ensure you receive top dollar for your software licenses.',
       bgColor: 'bg-primary/10',
     },
     {
-      icon: <ShieldCheck className="h-6 w-6 text-secondary" />,
+      icon: <AnimatedShield size="md" variant="secondary" />,
       title: 'Legally Compliant',
       description: 'All transactions are fully compliant with software licensing laws and vendor policies for complete peace of mind.',
       bgColor: 'bg-secondary/10',
     },
     {
-      icon: <Timer className="h-6 w-6 text-accent" />,
+      icon: <AnimatedClock size="md" variant="primary" />,
       title: 'Quick Turnaround',
       description: 'Our streamlined process means you get valuations within 24 hours and payment within days, not weeks.',
       bgColor: 'bg-accent/10',
     },
     {
-      icon: <HeadphonesIcon className="h-6 w-6 text-green-500" />,
+      icon: <motion.div 
+              className="relative w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center"
+              whileHover={{ scale: 1.1 }}
+              animate={{ 
+                boxShadow: ["0 0 0 0 rgba(34, 197, 94, 0.2)", "0 0 0 10px rgba(34, 197, 94, 0)"] 
+              }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <HeadphonesIcon className="h-6 w-6 text-green-500" />
+              <motion.div 
+                className="absolute w-3 h-3 bg-green-500 rounded-full"
+                animate={{ 
+                  scale: [1, 1.2, 1],
+                  opacity: [1, 0.6, 1]
+                }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                style={{ top: '10%', right: '20%' }}
+              />
+            </motion.div>,
       title: 'Dedicated Support',
       description: 'Our expert team guides you through every step of the process and is always available for questions.',
       bgColor: 'bg-green-500/10',
@@ -123,7 +142,33 @@ export default function WhyChooseUs() {
                     transition={{ delay: 0.05 * index, duration: 0.3 }}
                     viewport={{ once: true }}
                   >
-                    <Check className="h-5 w-5 text-green-500 mr-2" /> {vendor}
+                    <motion.div 
+                      className="text-green-500 mr-2 flex"
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      transition={{ 
+                        type: "spring",
+                        stiffness: 260,
+                        damping: 20,
+                        delay: 0.1 + 0.05 * index 
+                      }}
+                      viewport={{ once: true }}
+                    >
+                      <motion.div
+                        animate={{ 
+                          scale: [1, 1.2, 1],
+                          rotate: [0, 10, 0]
+                        }}
+                        transition={{ 
+                          duration: 0.4, 
+                          delay: 0.3 + 0.05 * index,
+                          ease: "easeInOut" 
+                        }}
+                      >
+                        <Check className="h-5 w-5" />
+                      </motion.div>
+                    </motion.div> 
+                    {vendor}
                   </motion.li>
                 ))}
               </ul>
