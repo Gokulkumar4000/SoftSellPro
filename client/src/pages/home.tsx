@@ -9,7 +9,7 @@ import Testimonials from '@/components/testimonials';
 import { ContactSection } from '@/components/contact-form';
 import CtaSection from '@/components/cta-section';
 import Footer from '@/components/footer';
-import ParticlesBackground from '@/components/ParticlesBackground';
+// Removed ParticlesBackground as per user request
 import BackgroundGradientAnimation from '@/components/BackgroundGradientAnimation';
 
 export default function Home() {
@@ -80,12 +80,7 @@ export default function Home() {
         ) : null}
       </AnimatePresence>
 
-      <ParticlesBackground 
-        particleCount={40} 
-        speed={0.3}
-        minSize={1}
-        maxSize={3}
-      />
+      {/* Particles background removed as per user request */}
       
       <motion.div 
         variants={pageVariants}
