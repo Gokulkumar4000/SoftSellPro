@@ -52,17 +52,6 @@ export default function ParticlesBackground({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
-    // Set canvas dimensions
-    const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      // Regenerate particles on resize
-      initParticles();
-    };
-    
-    window.addEventListener('resize', handleResize);
-    handleResize();
-    
     // Initialize particles
     const initParticles = () => {
       const colors = getColors();
@@ -76,6 +65,17 @@ export default function ParticlesBackground({
         opacity: Math.random() * 0.6 + 0.2,
       }));
     };
+    
+    // Set canvas dimensions
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      // Regenerate particles on resize
+      initParticles();
+    };
+    
+    window.addEventListener('resize', handleResize);
+    handleResize();
     
     // Track mouse movement for interactivity
     const handleMouseMove = (e: MouseEvent) => {
@@ -130,7 +130,12 @@ export default function ParticlesBackground({
         // Draw particle
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fillStyle = particle.color.replace(/rgba\((\d+,\s*\d+,\s*\d+),\s*[\d.]+\)/, `rgba($1, ${particle.opacity})`);
+        
+        // Set color with opacity
+        const alpha = particle.opacity;
+        // Extract base color without opacity
+        const baseColor = particle.color.replace(/rgba?\(([^)]+)(?:,[^)]*)\)/, "rgba($1,");
+        ctx.fillStyle = `${baseColor}${alpha})`;
         ctx.fill();
         
         // Connect nearby particles with lines
@@ -149,8 +154,14 @@ export default function ParticlesBackground({
         const distance = Math.sqrt(dx * dx + dy * dy);
         
         if (distance < 120) {
+          // Calculate opacity based on distance (closer = more opaque)
+          const alpha = 0.2 * (1 - distance / 120);
+          
+          // Extract base color without opacity
+          const baseColor = particle.color.replace(/rgba?\(([^)]+)(?:,[^)]*)\)/, "rgba($1,");
+          
           ctx.beginPath();
-          ctx.strokeStyle = particle.color.replace(/rgba\((\d+,\s*\d+,\s*\d+),\s*[\d.]+\)/, `rgba($1, ${0.2 * (1 - distance / 120)})`);
+          ctx.strokeStyle = `${baseColor}${alpha})`;
           ctx.lineWidth = 0.5;
           ctx.moveTo(particle.x, particle.y);
           ctx.lineTo(otherParticle.x, otherParticle.y);
