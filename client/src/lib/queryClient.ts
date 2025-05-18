@@ -7,38 +7,61 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
+// Mock data for your app:
+const mockData = {
+  "/api/products": [
+    { id: 1, name: "Product A", price: 19.99 },
+    { id: 2, name: "Product B", price: 29.99 },
+  ],
+  "/api/users": [
+    { id: 1, username: "Gokul" },
+    { id: 2, username: "Alice" },
+  ],
+  // add more mock endpoints as needed
+};
+
 export async function apiRequest(
   method: string,
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const res = await fetch(url, {
-    method,
-    headers: data ? { "Content-Type": "application/json" } : {},
-    body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
-  });
+  // Simulate network latency (optional)
+  await new Promise(res => setTimeout(res, 200));
 
-  await throwIfResNotOk(res);
-  return res;
+  if (method === "GET" && url in mockData) {
+    const body = JSON.stringify(mockData[url]);
+    return new Response(body, {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  // For other methods or unknown endpoints, just return 200 OK empty
+  return new Response(null, { status: 200 });
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
+
 export const getQueryFn: <T>(options: {
   on401: UnauthorizedBehavior;
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey[0] as string, {
-      credentials: "include",
-    });
+    const url = queryKey[0] as string;
 
-    if (unauthorizedBehavior === "returnNull" && res.status === 401) {
-      return null;
+    // Simulate network latency (optional)
+    await new Promise(res => setTimeout(res, 200));
+
+    if (url in mockData) {
+      return mockData[url] as unknown as T;
     }
 
-    await throwIfResNotOk(res);
-    return await res.json();
+    if (unauthorizedBehavior === "returnNull") {
+      return null as unknown as T;
+    }
+
+    // If endpoint unknown, throw error
+    throw new Error(`Mock API: Endpoint not found: ${url}`);
   };
 
 export const queryClient = new QueryClient({

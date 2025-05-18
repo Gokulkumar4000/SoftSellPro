@@ -1,0 +1,16 @@
+{
+    "name": "softsellpro-server",
+    "version": "1.0.0",
+    "type": "module",
+    "main": "index.ts",
+    "scripts": {
+        "start": "tsx index.ts"
+    },
+    "dependencies": {
+        "cors": "^2.8.5",
+        "express": "^4.21.2"
+    },
+    "devDependencies": {
+        "tsx": "^4.19.4"
+    }
+}
